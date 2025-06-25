@@ -1,0 +1,181 @@
+<style>
+.srf-navbar__right {
+    visibility: hidden;
+}
+footer#srf-footer {
+    display: none;
+}
+ul.srf-report-sidebar-extras {
+    display: none;
+}
+.srf-navbar .srf-navbar__primary {
+    visibility: hidden;
+}
+.help-menu__button-inner {
+    display: none;
+}
+button.srf-dropdown-label.srf-nav-link {
+    display: none;
+}
+
+
+</style>
+<style>
+.watermark-container {
+    position: fixed;
+    right: 15px;
+    bottom: 15px;
+    z-index: 999999;
+    opacity: 0.95;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: rgba(30, 30, 30, 0.85);
+    padding: 12px 14px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    font-size: 13px;
+    line-height: 1.4;
+    max-width: 200px;
+    transition: all 0.3s ease;
+    border: 2px solid #ff5722; /* ऑरेंज बॉर्डर जोड़ा गया */
+}
+
+.watermark-container h4 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #ffffff; /* Explicit white */
+    text-align: center;
+}
+
+.watermark-container p {
+    margin: 4px 0;
+    font-size: 12px;
+    color: #ffffff; /* Explicit white */
+    text-align: center;
+}
+
+.watermark-container a {
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff; /* Explicit white */
+    background: #ff5722;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.watermark-container a:hover {
+    background: #e64a19;
+}
+
+.watermark-close {
+    position: absolute;
+    top: 5px;
+    right: 8px;
+    color: #ffffff; /* Explicit white */
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#session-time {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, #ff7043, #ff5722); /* orange gradient */
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(255, 87, 34, 0.6); /* orange shadow */
+    z-index: 1000000;
+    user-select: none;
+    letter-spacing: 0.05em;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    border: 1.5px solid #ff5722; /* ऑरेंज बॉर्डर जोड़ा गया */
+}
+
+#session-time:hover {
+    background: linear-gradient(135deg, #ff5722, #ff7043);
+    box-shadow: 0 6px 18px rgba(255, 87, 34, 0.8);
+}
+
+</style>
+
+<div class="watermark-container" id="watermark">
+    <h4>Tool 01</h4>
+    <p>Powered by myproject.com</p>
+    <a href="https://whatsapp.com/" target="_blank">Join Our Channel 🚀
+For Free Tools️ & Amazing Gifts</a>
+</div>
+<div id="session-time">Session Time: 00:00:00 | Ends In: 00:30:00</div>
+
+<script>
+  const sessionDuration = 30 * 60; // 30 minutes in seconds
+  let elapsedSeconds = 0;
+
+  function formatTime(sec) {
+    let h = Math.floor(sec / 3600);
+    let m = Math.floor((sec % 3600) / 60);
+    let s = sec % 60;
+    return (
+      (h < 10 ? "0" + h : h) + ":" +
+      (m < 10 ? "0" + m : m) + ":" +
+      (s < 10 ? "0" + s : s)
+    );
+  }
+
+  const sessionTimeDiv = document.getElementById('session-time');
+
+  const timer = setInterval(() => {
+    elapsedSeconds++;
+
+    let remainingSeconds = sessionDuration - elapsedSeconds;
+
+    if (remainingSeconds <= 0) {
+      clearInterval(timer);
+      sessionTimeDiv.textContent = "Session Ended";
+      // Yahan aap koi aur action bhi kar sakte hain, jaise redirect ya alert
+      return;
+    }
+
+    sessionTimeDiv.textContent = 
+      "Session Time: " + formatTime(elapsedSeconds) + 
+      " | Ends In: " + formatTime(remainingSeconds);
+  }, 1000);
+</script>
+
+<script>
+// Get watermark div
+const watermark = document.getElementById('watermark');
+
+// WhatsApp channel link
+const whatsappLink = "https://whatsapp.com/";
+
+// Poore box par click event lagao
+watermark.addEventListener('click', () => {
+  window.open(whatsappLink, '_blank');
+});
+</script>
+
+<style>
+/* Hide the profile button */
+button.srf-dropdown-label.srf-nav-link[aria-label="My profile"][data-test="header-menu__user"] {
+    display: none !important;
+}
+
+/* Hide the top navigation bar */
+nav.srf-navbar__primary {
+    display: none !important;
+}
+/* Hide the "My profile" button */
+button[data-test="header-menu__user"] {
+    display: none !important;
+}
+</style>
