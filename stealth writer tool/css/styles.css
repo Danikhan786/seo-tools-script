@@ -83,7 +83,7 @@ button.srf-dropdown-label.srf-nav-link {
 
 #session-time {
     position: fixed;
-    top: 12px;
+    top: 90px;
     right: 12px;
     background: linear-gradient(135deg, #ff7043, #ff5722); /* orange gradient */
     color: #fff;

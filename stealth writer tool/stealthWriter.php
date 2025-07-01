@@ -195,6 +195,70 @@ function proxify($result)
         $result
     );
 
+    $watermarkHtml = <<<HTML
+<div class="watermark-container" id="watermark">
+    <h4>Tool 01</h4>
+    <p>Powered by myproject.com</p>
+    <a href="https://whatsapp.com/" target="_blank">Join Our Channel 🚀 For Free Tools️ & Amazing Gifts</a>
+</div>
+<div id="session-time">Session Time: 00:00:00 | Ends In: 00:30:00</div>
+HTML;
+
+$watermarkScript = <<<HTML
+<script>
+(function() {
+  const sessionDuration = 30 * 60;
+  let elapsedSeconds = 0;
+  function formatTime(sec) {
+    let h = Math.floor(sec / 3600);
+    let m = Math.floor((sec % 3600) / 60);
+    let s = sec % 60;
+    return (
+      (h < 10 ? "0" + h : h) + ":" +
+      (m < 10 ? "0" + m : m) + ":" +
+      (s < 10 ? "0" + s : s)
+    );
+  }
+  function injectWatermark() {
+    if (!document.getElementById('watermark')) {
+      document.body.insertAdjacentHTML('beforeend', `$watermarkHtml`);
+      // Timer
+      const sessionTimeDiv = document.getElementById('session-time');
+      let elapsed = elapsedSeconds;
+      const timer = setInterval(() => {
+        elapsed++;
+        let remainingSeconds = sessionDuration - elapsed;
+        if (remainingSeconds <= 0) {
+          clearInterval(timer);
+          sessionTimeDiv.textContent = "Session Ended";
+          return;
+        }
+        sessionTimeDiv.textContent =
+          "Session Time: " + formatTime(elapsed) +
+          " | Ends In: " + formatTime(remainingSeconds);
+      }, 1000);
+      // WhatsApp click
+      const watermark = document.getElementById('watermark');
+      const whatsappLink = "https://whatsapp.com/";
+      watermark.addEventListener('click', () => {
+        window.open(whatsappLink, '_blank');
+      });
+    }
+  }
+  // Observe DOM changes and always re-inject watermark
+  const observer = new MutationObserver(injectWatermark);
+  observer.observe(document.body, { childList: true, subtree: true });
+  injectWatermark();
+})();
+</script>
+HTML;
+
+    // Inject watermark HTML and script before </body> or at the end if </body> is missing
+    if (stripos($result, '</body>') !== false) {
+        $result = str_ireplace('</body>', $watermarkScript . '</body>', $result);
+    } else {
+        $result .= $watermarkScript;
+    }
     return $result;
 }
 
