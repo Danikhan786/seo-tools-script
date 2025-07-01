@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/stealthWriter.php";
+require __DIR__ . '/stealthWriter.php';
 
 // Load custom CSS
 $css = file_get_contents(__DIR__ . "/css/styles.css");
