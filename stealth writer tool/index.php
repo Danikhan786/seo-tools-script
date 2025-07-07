@@ -2,6 +2,7 @@
 ob_start(function($buffer) {
     $customCss = '<style>
     header.sticky, aside.fixed { display: none !important; }
+    .lg\\:ml-60 { margin-left: 0 !important; }
     body { margin: 0 !important; padding: 0 !important; }
     </style>';
     // Inject CSS before </head>
@@ -31,4 +32,6 @@ body {
 </style>';
 
 echo "\n";
+
+ob_end_flush();
 ?>
