@@ -1,0 +1,29 @@
+{
+    "WRITERHUMAN_PROXY": {
+        "tool_name": "WriterHumanProxy",
+        "cookie_data": {
+            "rephrasegpt_live_u2main": "bus|1751979594176x197248403077505470|1751979594189x190887140696562430",
+            "rephrasegpt_live_u2main.sig": "8jxU_4OVLrv3-w4JbUGlmVkx4Gw",
+            "rephrasegpt_u1main": "1751979594176x197248403077505470",
+            "__stripe_mid": "f00fa402-c1a8-4cd8-b464-4875dc45e7e9b7d601"
+        },
+        "proxy": {
+            "ip": "",
+            "port": "",
+            "username": "",
+            "password": "",
+            "useragent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
+            "targeturl": "https://writehuman.ai/",
+            "baseurl": "https://writehuman.ai/"
+        },
+        "secure": {
+            "noaccessurl": "",
+            "urlafteraccess": "",
+            "blockips": "",
+            "downloadlimit": "",
+            "productsid": "",
+            "pagename": "WriterHuman Proxy",
+            "sessiontime": ""
+        }
+    }
+}
