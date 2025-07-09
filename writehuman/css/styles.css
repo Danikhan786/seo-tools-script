@@ -1,28 +1,32 @@
-<style>
-.srf-navbar__right {
+<style>.srf-navbar__right {
     visibility: hidden;
 }
+
 footer#srf-footer {
     display: none;
 }
+
 ul.srf-report-sidebar-extras {
     display: none;
 }
+
 .srf-navbar .srf-navbar__primary {
     visibility: hidden;
 }
+
 .help-menu__button-inner {
     display: none;
 }
+
 button.srf-dropdown-label.srf-nav-link {
     display: none;
 }
+
 .mt-6 {
-  display: none !important;
+    display: none !important;
 }
-</style>
-<style>
-.watermark-container {
+
+</style><style>.watermark-container {
     position: fixed;
     right: 15px;
     bottom: 15px;
@@ -38,20 +42,23 @@ button.srf-dropdown-label.srf-nav-link {
     line-height: 1.4;
     max-width: 200px;
     transition: all 0.3s ease;
-    border: 2px solid #ff5722; /* ऑरेंज बॉर्डर जोड़ा गया */
+    border: 2px solid #ff5722;
+    /* ऑरेंज बॉर्डर जोड़ा गया */
 }
 
 .watermark-container h4 {
     margin: 0 0 8px 0;
     font-size: 14px;
-    color: #ffffff; /* Explicit white */
+    color: #ffffff;
+    /* Explicit white */
     text-align: center;
 }
 
 .watermark-container p {
     margin: 4px 0;
     font-size: 12px;
-    color: #ffffff; /* Explicit white */
+    color: #ffffff;
+    /* Explicit white */
     text-align: center;
 }
 
@@ -62,7 +69,8 @@ button.srf-dropdown-label.srf-nav-link {
     padding: 6px 10px;
     font-size: 12px;
     font-weight: bold;
-    color: #ffffff; /* Explicit white */
+    color: #ffffff;
+    /* Explicit white */
     background: #ff5722;
     border-radius: 6px;
     text-decoration: none;
@@ -77,7 +85,8 @@ button.srf-dropdown-label.srf-nav-link {
     position: absolute;
     top: 5px;
     right: 8px;
-    color: #ffffff; /* Explicit white */
+    color: #ffffff;
+    /* Explicit white */
     font-size: 14px;
     cursor: pointer;
 }
@@ -86,20 +95,23 @@ button.srf-dropdown-label.srf-nav-link {
     position: fixed;
     top: 90px;
     right: 12px;
-    background: linear-gradient(135deg, #ff7043, #ff5722); /* orange gradient */
+    background: linear-gradient(135deg, #ff7043, #ff5722);
+    /* orange gradient */
     color: #fff;
     padding: 8px 16px;
     border-radius: 12px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 15px;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(255, 87, 34, 0.6); /* orange shadow */
+    box-shadow: 0 4px 12px rgba(255, 87, 34, 0.6);
+    /* orange shadow */
     z-index: 1000000;
     user-select: none;
     letter-spacing: 0.05em;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     transition: background 0.3s ease, box-shadow 0.3s ease;
-    border: 1.5px solid #ff5722; /* ऑरेंज बॉर्डर जोड़ा गया */
+    border: 1.5px solid #ff5722;
+    /* ऑरेंज बॉर्डर जोड़ा गया */
 }
 
 #session-time:hover {
@@ -107,65 +119,46 @@ button.srf-dropdown-label.srf-nav-link {
     box-shadow: 0 6px 18px rgba(255, 87, 34, 0.8);
 }
 
-</style>
+</style><div class="watermark-container" id="watermark"><h4>Tool 01</h4><p>Powered by myproject.com</p><a href="https://whatsapp.com/" target="_blank">Join Our Channel 🚀 For Free Tools️ & Amazing Gifts</a></div><div id="session-time">Session Time: 00:00:00 | Ends In: 00:30:00</div><script>const sessionDuration=30 * 60; // 30 minutes in seconds
+let elapsedSeconds=0;
 
-<div class="watermark-container" id="watermark">
-    <h4>Tool 01</h4>
-    <p>Powered by myproject.com</p>
-    <a href="https://whatsapp.com/" target="_blank">Join Our Channel 🚀
-For Free Tools️ & Amazing Gifts</a>
-</div>
-<div id="session-time">Session Time: 00:00:00 | Ends In: 00:30:00</div>
+function formatTime(sec) {
+    let h=Math.floor(sec / 3600);
+    let m=Math.floor((sec % 3600) / 60);
+    let s=sec % 60;
+    return ((h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s));
+}
 
-<script>
-  const sessionDuration = 30 * 60; // 30 minutes in seconds
-  let elapsedSeconds = 0;
+const sessionTimeDiv=document.getElementById('session-time');
 
-  function formatTime(sec) {
-    let h = Math.floor(sec / 3600);
-    let m = Math.floor((sec % 3600) / 60);
-    let s = sec % 60;
-    return (
-      (h < 10 ? "0" + h : h) + ":" +
-      (m < 10 ? "0" + m : m) + ":" +
-      (s < 10 ? "0" + s : s)
-    );
-  }
+const timer=setInterval(()=> {
+        elapsedSeconds++;
 
-  const sessionTimeDiv = document.getElementById('session-time');
+        let remainingSeconds=sessionDuration - elapsedSeconds;
 
-  const timer = setInterval(() => {
-    elapsedSeconds++;
+        if (remainingSeconds <=0) {
+            clearInterval(timer);
+            sessionTimeDiv.textContent="Session Ended";
+            // Yahan aap koi aur action bhi kar sakte hain, jaise redirect ya alert
+            return;
+        }
 
-    let remainingSeconds = sessionDuration - elapsedSeconds;
-
-    if (remainingSeconds <= 0) {
-      clearInterval(timer);
-      sessionTimeDiv.textContent = "Session Ended";
-      // Yahan aap koi aur action bhi kar sakte hain, jaise redirect ya alert
-      return;
+        sessionTimeDiv.textContent="Session Time: " + formatTime(elapsedSeconds) + " | Ends In: " + formatTime(remainingSeconds);
     }
 
-    sessionTimeDiv.textContent = 
-      "Session Time: " + formatTime(elapsedSeconds) + 
-      " | Ends In: " + formatTime(remainingSeconds);
-  }, 1000);
-</script>
-
-<script>
-// Get watermark div
-const watermark = document.getElementById('watermark');
+    , 1000);
+</script><script> // Get watermark div
+const watermark=document.getElementById('watermark');
 
 // WhatsApp channel link
-const whatsappLink = "https://whatsapp.com/";
+const whatsappLink="https://whatsapp.com/";
 
 // Poore box par click event lagao
-watermark.addEventListener('click', () => {
-  window.open(whatsappLink, '_blank');
-});
-</script>
+watermark.addEventListener('click', ()=> {
+        window.open(whatsappLink, '_blank');
+    });
+</script><style>
 
-<style>
 /* Hide the profile button */
 button.srf-dropdown-label.srf-nav-link[aria-label="My profile"][data-test="header-menu__user"] {
     display: none !important;
@@ -175,8 +168,35 @@ button.srf-dropdown-label.srf-nav-link[aria-label="My profile"][data-test="heade
 nav.srf-navbar__primary {
     display: none !important;
 }
+
 /* Hide the "My profile" button */
 button[data-test="header-menu__user"] {
     display: none !important;
 }
+
+.b-root .bubble-element.baTaNaXaJ {
+    display: none;
+}
+
+.b-root .bubble-element.baTaLaLd,
+.b-root .bubble-element.baTaLaQb,
+.b-root .bubble-element.baTaLaWaW,
+.b-root .bubble-element.baTaLaYm,
+.b-root .bubble-element.baTaUaRd,
+.b-root .bubble-element.baTaUfaP,
+.b-root .bubble-element.baTaWjg,
+.b-root .bubble-element.baTaYfu,
+.b-root .bubble-element.baTaOqaZ,
+.b-root .bubble-element.baTamaF,
+.b-root .bubble-element.baTaOyaF,
+.b-root .bubble-element.baTaOyp,
+.b-root .bubble-element.baTaOvaF,
+.b-root .bubble-element.baTaLaWy,
+.b-root .bubble-element.baTaLaWy,
+.b-root .bubble-element.baTaJdw,
+.b-root .bubble-element.baTaQji,
+.b-root .bubble-element.baTaLio {
+    display: none;
+}
+
 </style>
