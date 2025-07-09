@@ -156,6 +156,9 @@
             <a href="status.php" class="btn">
                 🔍 Status Check
             </a>
+            <a href="local-diagnostic.php" class="btn">
+                🔧 Local Diagnostic
+            </a>
         </div>
         
         <div class="info-box">
