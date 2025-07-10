@@ -1,0 +1,54 @@
+[
+    {
+        "domain": ".azadseo.click",
+        "expirationDate": 1771655128,
+        "hostOnly": false,
+        "httpOnly": false,
+        "name": "AMP_6e403e775d",
+        "path": "/",
+        "sameSite": "lax",
+        "secure": false,
+        "session": false,
+        "storeId": null,
+        "value": "JTdCJTIyZGV2aWNlSWQlMjIlM0ElMjI4NDdkYjM0ZS00YWUxLTQyYWYtOTEzYy0wZjQ0MWE4ZTFlYWMlMjIlMkMlMjJzZXNzaW9uSWQlMjIlM0ExNzQwMTE5MTI4MTUyJTJDJTIyb3B0T3V0JTIyJTNBZmFsc2UlMkMlMjJsYXN0RXZlbnRUaW1lJTIyJTNBMTc0MDExOTEyODI5MiUyQyUyMmxhc3RFdmVudElkJTIyJTNBMCU3RA=="
+    },
+    {
+        "domain": ".azadseo.click",
+        "expirationDate": 1771655128,
+        "hostOnly": false,
+        "httpOnly": false,
+        "name": "AMP_MKTG_6e403e775d",
+        "path": "/",
+        "sameSite": "lax",
+        "secure": false,
+        "session": false,
+        "storeId": null,
+        "value": "JTdCJTIycmVmZXJyZXIlMjIlM0ElMjJodHRwcyUzQSUyRiUyRm1lbWJlcnMuYXphZHNlby5jb20lMkYlMjIlMkMlMjJyZWZlcnJpbmdfZG9tYWluJTIyJTNBJTIybWVtYmVycy5hemFkc2VvLmNvbSUyMiU3RA=="
+    },
+    {
+        "domain": ".azadseo.click",
+        "expirationDate": 1774679128.063675,
+        "hostOnly": false,
+        "httpOnly": false,
+        "name": "_sp_id.1b19",
+        "path": "/",
+        "sameSite": "lax",
+        "secure": true,
+        "session": false,
+        "storeId": null,
+        "value": "47b65473-724f-49d1-a222-9b72cea4da21.1740119128.1.1740119128..d6c28436-891f-4fe0-ae88-e37d642f88a6....0"
+    },
+    {
+        "domain": ".semrush1.azadseo.click",
+        "expirationDate": 1778063172.541392,
+        "hostOnly": false,
+        "httpOnly": true,
+        "name": "proxy_access_token",
+        "path": "/",
+        "sameSite": null,
+        "secure": true,
+        "session": false,
+        "storeId": null,
+        "value": "24679fe066be9fba3081f55eac9aa39c"
+    }
+]

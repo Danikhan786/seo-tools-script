@@ -1,5 +1,6 @@
 <?php
 
+// $allowedDomain = "localhost:";
 $allowedDomain = "localhost:";
 define("LICENSE_START_DATE", value: "2025-06-03");
 $expiryTimestamp = strtotime(LICENSE_START_DATE . " +1 year");

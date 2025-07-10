@@ -1,21 +1,24 @@
 <?php
 
-$allowedDomain = "localhost:";
-define("LICENSE_START_DATE", value: "2025-06-03");
+$allowedDomain = "writerhuman.toolsworlds.com";
+define("LICENSE_START_DATE", "2025-06-03");
 $expiryTimestamp = strtotime(LICENSE_START_DATE . " +1 year");
 $currentHost = $_SERVER["HTTP_HOST"] ?? "";
 $now = time();
-
+if($expiryTimestamp < $now || strcasecmp($currentHost, $allowedDomain) !== 0) {
+    header("Location: https://nomangraphics.org/?license=invalid");
+    exit;
+}
 include "access.php";
 define("COOKIE_FILE", __DIR__ . "/cookie.json");
 define("WEBSITE_URL", getTargetUrl());
 $css = file_get_contents(__DIR__ . "/css/styles.css");
-if (!function_exists("getallheaders")) {
+if(!function_exists("getallheaders")) {
     function getallheaders()
     {
         $result = [];
         foreach ($_SERVER as $key => $value) {
-            if (substr($key, 0, 5) == "HTTP_") {
+            if(substr($key, 0, 5) == "HTTP_") {
                 $key = str_replace(" ", "-", ucwords(strtolower(str_replace("_", " ", substr($key, 5)))));
                 $result[$key] = $value;
             } else {
@@ -29,7 +32,7 @@ function getTargetUrl()
 {
     $jsonContent = file_get_contents(COOKIE_FILE);
     $dataFile = json_decode($jsonContent, true);
-    $toolUID = "WRITERHUMAN_PROXY"; // <-- changed here
+    $toolUID = "WRITERHUMAN_PROXY";
     return $dataFile[$toolUID]["proxy"]["targeturl"];
 }
 function initRequest($url)
@@ -38,26 +41,26 @@ function initRequest($url)
     $responseBody = $response["body"];
     $responseInfo = $response["responseInfo"];
     $contentType = isset($responseInfo["content_type"]) ? $responseInfo["content_type"] : "text/html";
-    if (stripos($contentType, "text/html") !== false) {
+    if(stripos($contentType, "text/html") !== false) {
         header("Content-Type: text/html");
-    } elseif (stripos($contentType, "text/css") !== false) {
+    } elseif(stripos($contentType, "text/css") !== false) {
         header("Content-Type: text/css");
     } else {
         header("Content-Type: " . $contentType);
     }
     echo proxify($responseBody);
 }
+
 function makeRequest($url)
 {
     $jsonContent = file_get_contents(COOKIE_FILE);
     $dataFile = json_decode($jsonContent, true);
-    $toolUID = "WRITERHUMAN_PROXY"; // <-- changed here
+    $toolUID = "WRITERHUMAN_PROXY";
     $proxyData = $dataFile[$toolUID]["proxy"];
     $cookieData = $dataFile[$toolUID]["cookie_data"];
-    // Build the Cookie header
-    $cookieHeader = '';
-    foreach ($cookieData as $name => $value) {
-        $cookieHeader .= "$name=$value; ";
+    $cookieHeader = "";
+    foreach ($cookieData as $key => $value) {
+        $cookieHeader .= $key . "=" . $value . "; ";
     }
     $browserRequestHeaders = getallheaders();
     unset($browserRequestHeaders["Host"]);
@@ -72,26 +75,24 @@ function makeRequest($url)
     $browserRequestHeaders["Origin"] = WEBSITE_URL;
     $browserRequestHeaders["Referer"] = $referer;
     $browserRequestHeaders["Sec-Fetch-Site"] = "same-origin";
-    $browserRequestHeaders["Cookie"] = trim($cookieHeader);
+    $browserRequestHeaders["Cookie"] = $cookieHeader;
     $ch = curl_init();
-    curl_setopt_array(
-        $ch,
-        [
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 3600,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_USERAGENT => $agent,
-            CURLOPT_PROXY => $proxyData["ip"],
-            CURLOPT_PROXYPORT => $proxyData["port"],
-            CURLOPT_PROXYUSERPWD => $proxyData["username"] . ":" . $proxyData["password"],
-            CURLOPT_REFERER => $referer
-        ]
-    );
+    curl_setopt_array($ch, 
+    [
+        CURLOPT_URL => $url, 
+        CURLOPT_RETURNTRANSFER => true, 
+        CURLOPT_FOLLOWLOCATION => true, 
+        CURLOPT_ENCODING => "", 
+        CURLOPT_MAXREDIRS => 10, 
+        CURLOPT_TIMEOUT => 3600, 
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, 
+        CURLOPT_SSL_VERIFYPEER => false, 
+        CURLOPT_USERAGENT => $agent, 
+        CURLOPT_PROXY => $proxyData["ip"], 
+        CURLOPT_PROXYPORT => $proxyData["port"], 
+        CURLOPT_PROXYUSERPWD => $proxyData["username"] . ":" . $proxyData["password"], 
+        CURLOPT_REFERER => $referer
+    ]);
     switch ($_SERVER["REQUEST_METHOD"]) {
         case "GET":
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
@@ -110,24 +111,25 @@ function makeRequest($url)
             curl_setopt($ch, CURLOPT_VERBOSE, true);
             curl_setopt($ch, CURLOPT_NOBODY, true);
             break;
-    }
-    $curlRequestHeaders = [];
-    foreach ($browserRequestHeaders as $name => $value) {
-        $curlRequestHeaders[] = $name . ": " . $value;
-    }
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $curlRequestHeaders);
-    curl_setopt($ch, CURLOPT_COOKIE, $cookieHeader);
-    $response = curl_exec($ch);
-    $responseInfo = curl_getinfo($ch);
-    $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-    $responseHeaders = substr($response, 0, $headerSize);
-    curl_close($ch);
-    return [
-        "headers" => $responseHeaders,
-        "body" => $response,
-        "responseInfo" => $responseInfo
-    ];
+        }        
+        $curlRequestHeaders = [];
+        foreach ($browserRequestHeaders as $name => $value) {
+            $curlRequestHeaders[] = $name . ": " . $value;
+        }
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $curlRequestHeaders);
+        $response = curl_exec($ch);
+        $responseInfo = curl_getinfo($ch);
+        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $responseHeaders = substr($response, 0, $headerSize);
+        curl_close($ch);
+        return [
+            "headers" => $responseHeaders, 
+            "body" => $response, 
+            "responseInfo" => $responseInfo
+        ];
+    
 }
+
 function proxify($result)
 {
     global $css;
@@ -203,7 +205,6 @@ function proxify($result)
 
     // Inject your CSS
     $result = str_replace("</head>", "<style>" . $css . "</style></head>", $result);
-
 
     // Your existing replacements
     $result = str_replace("/logouttt", "/", $result);
@@ -292,36 +293,4 @@ HTML;
     return $result;
 }
 
-$requestUri = $_SERVER['REQUEST_URI'] ?? '/';
-
-// Handle special cases for WriteHuman.ai resources
-if (strpos($requestUri, '/package/') === 0 || strpos($requestUri, '/api/') === 0) {
-    // These are internal WriteHuman.ai resources, proxy them directly
-    $targetUrl = WEBSITE_URL . ltrim($requestUri, '/');
-    $response = makeRequest($targetUrl);
-    $contentType = $response['responseInfo']['content_type'] ?? 'application/octet-stream';
-    header('Content-Type: ' . $contentType);
-    echo $response['body'];
-    exit;
-}
-
-// Handle CDN resources - redirect to original
-if (strpos($requestUri, '/cdn.') !== false || preg_match('/\/[a-z0-9-]+\.cdn\.bubble\.io\//', $requestUri)) {
-    $targetUrl = 'https://writehuman.ai' . $requestUri;
-    header('Location: ' . $targetUrl);
-    exit;
-}
-
-// Main proxy logic for HTML pages
-$targetUrl = WEBSITE_URL . ltrim($requestUri, '/');
-$response = makeRequest($targetUrl);
-$contentType = $response['responseInfo']['content_type'] ?? 'text/html';
-
-if (stripos($contentType, 'text/html') !== false) {
-    header('Content-Type: text/html');
-    echo proxify($response['body']);
-} else {
-    header('Content-Type: ' . $contentType);
-    echo $response['body'];
-}
-exit;
+?> 

@@ -1,0 +1,29 @@
+{
+    "ABUBAKKARAHMAD": {
+        "tool_name": "ABUBAKKARAHMAD",
+        "cookie_data": {
+            "AMP_6e403e775d": "JTdCJTIyZGV2aWNlSWQlMjIlM0ElMjI4NDdkYjM0ZS00YWUxLTQyYWYtOTEzYy0wZjQ0MWE4ZTFlYWMlMjIlMkMlMjJzZXNzaW9uSWQlMjIlM0ExNzQwMTE5MTI4MTUyJTJDJTIyb3B0T3V0JTIyJTNBZmFsc2UlMkMlMjJsYXN0RXZlbnRUaW1lJTIyJTNBMTc0MDExOTEyODI5MiUyQyUyMmxhc3RFdmVudElkJTIyJTNBMCU3RA==",
+            "AMP_MKTG_6e403e775d": "JTdCJTIycmVmZXJyZXIlMjIlM0ElMjJodHRwcyUzQSUyRiUyRm1lbWJlcnMuYXphZHNlby5jb20lMkYlMjIlMkMlMjJyZWZlcnJpbmdfZG9tYWluJTIyJTNBJTIybWVtYmVycy5hemFkc2VvLmNvbSUyMiU3RA==",
+            "_sp_id.1b19": "47b65473-724f-49d1-a222-9b72cea4da21.1740119128.1.1740119128..d6c28436-891f-4fe0-ae88-e37d642f88a6....0",
+            "proxy_access_token": "24679fe066be9fba3081f55eac9aa39c"
+        },
+        "proxy": {
+            "ip": "",
+            "port": "",
+            "username": "",
+            "password": "",
+            "useragent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
+            "targeturl": "https://semrush1.azadseo.click",
+            "baseurl": "https://semrush.toolsworlds.com"
+        },
+        "secure": {
+            "noaccessurl": "",
+            "urlafteraccess": "",
+            "blockips": "",
+            "downloadlimit": "",
+            "productsid": "",
+            "pagename": "Semrush",
+            "sessiontime": ""
+        }
+    }
+}
