@@ -1,6 +1,6 @@
 <?php
 
-$allowedDomain = "writerhuman.toolsworlds.com";
+$allowedDomain = "writehuman.toolsworlds.com";
 define("LICENSE_START_DATE", "2025-06-03");
 $expiryTimestamp = strtotime(LICENSE_START_DATE . " +1 year");
 $currentHost = $_SERVER["HTTP_HOST"] ?? "";

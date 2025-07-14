@@ -179,21 +179,21 @@ function proxify($result)
     // Replace API endpoints in JS code
     $result = preg_replace(
         '#(["\'])https://(?:[a-z0-9-]+\.)*stealthwriter\.ai(/api/[^"\']*)#i',
-        '$1http://' . $proxyHost . '$2',
+        '$1' . $protocol . '://' . $proxyHost . '$2',
         $result
     );
 
     // Replace all API endpoints in JS code (fetch, axios, etc.)
     $result = preg_replace(
         '#(https?:)?//(?:[a-z0-9-]+\.)*stealthwriter\.ai(/api/[^"\')\s]*)#i',
-        'http://' . $proxyHost . '$2',
+        $protocol . '://' . $proxyHost . '$2',
         $result
     );
 
     // Replace fetch("/api/...") and similar
     $result = preg_replace(
         '#fetch\((["\'])(/api/[^"\']*)#i',
-        'fetch($1http://' . $proxyHost . '$2',
+        'fetch($1' . $protocol . '://' . $proxyHost . '$2',
         $result
     );
 

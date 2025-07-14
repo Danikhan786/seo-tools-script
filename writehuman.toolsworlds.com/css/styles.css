@@ -119,7 +119,12 @@ button.srf-dropdown-label.srf-nav-link {
     box-shadow: 0 6px 18px rgba(255, 87, 34, 0.8);
 }
 
-</style><div class="watermark-container" id="watermark"><h4>Tool 01</h4><p>Powered by myproject.com</p><a href="https://whatsapp.com/" target="_blank">Join Our Channel 🚀 For Free Tools️ & Amazing Gifts</a></div><div id="session-time">Session Time: 00:00:00 | Ends In: 00:30:00</div><script>const sessionDuration=30 * 60; // 30 minutes in seconds
+</style><div class="watermark-container" id="watermark">
+    <h4>writehuman 1</h4>
+    <p>Powered by toolbaazar.com</p>
+    <a href="https://whatsapp.com/channel/0029VaaxOif2kNFs3xAoL134" target="_blank">Join Our Channel 🚀
+For Free Tools️ & Amazing Gifts</a>
+</div><div id="session-time">Session Time: 00:00:00 | Ends In: 00:30:00</div><script>const sessionDuration=30 * 60; // 30 minutes in seconds
 let elapsedSeconds=0;
 
 function formatTime(sec) {
