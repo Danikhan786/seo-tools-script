@@ -41,14 +41,30 @@ function initRequest($url)
     $responseBody = $response["body"];
     $responseInfo = $response["responseInfo"];
     $contentType = isset($responseInfo["content_type"]) ? $responseInfo["content_type"] : "text/html";
+    
+    // Set appropriate headers
     if(stripos($contentType, "text/html") !== false) {
-        header("Content-Type: text/html");
+        header("Content-Type: text/html; charset=UTF-8");
     } elseif(stripos($contentType, "text/css") !== false) {
-        header("Content-Type: text/css");
+        header("Content-Type: text/css; charset=UTF-8");
+    } elseif(stripos($contentType, "application/javascript") !== false) {
+        header("Content-Type: application/javascript; charset=UTF-8");
     } else {
         header("Content-Type: " . $contentType);
     }
-    echo proxify($responseBody);
+    
+    // Add security headers
+    header("X-Content-Type-Options: nosniff");
+    header("X-Frame-Options: DENY");
+    header("X-XSS-Protection: 1; mode=block");
+    
+    try {
+        echo proxify($responseBody);
+    } catch (Exception $e) {
+        // Log error and return original content if proxify fails
+        error_log("Proxify error: " . $e->getMessage());
+        echo $responseBody;
+    }
 }
 
 function makeRequest($url)
@@ -136,6 +152,13 @@ function proxify($result)
     $parse = parse_url(WEBSITE_URL);
     $host = $parse["host"];
     $proxyHost = $_SERVER["HTTP_HOST"];
+    
+    // Determine the correct protocol (https if the request is secure, http otherwise)
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+    
+    // Check if this is a JavaScript file - if so, only do minimal replacements
+    $isJavaScript = (stripos($_SERVER['REQUEST_URI'], '.js') !== false) || 
+                   (stripos($_SERVER['REQUEST_URI'], 'rocket-loader') !== false);
 
     // Match any subdomain of stealthwriter.ai
     $domainPattern = '(?:[a-z0-9-]+\.)*stealthwriter\.ai';
@@ -143,8 +166,8 @@ function proxify($result)
     // Replace absolute URLs (http(s)://*.stealthwriter.ai)
     $result = preg_replace_callback(
         '#(src|href|action)=([\'"])(https?:)?//'.$domainPattern.'(/[^\'"]*)#i',
-        function ($matches) use ($proxyHost) {
-            return "{$matches[1]}={$matches[2]}http://{$proxyHost}{$matches[4]}";
+        function ($matches) use ($proxyHost, $protocol) {
+            return "{$matches[1]}={$matches[2]}{$protocol}://{$proxyHost}{$matches[4]}";
         },
         $result
     );
@@ -152,8 +175,8 @@ function proxify($result)
     // Protocol-relative URLs (//*.stealthwriter.ai)
     $result = preg_replace_callback(
         '#(src|href|action)=([\'"])//'.$domainPattern.'(/[^\'"]*)#i',
-        function ($matches) use ($proxyHost) {
-            return "{$matches[1]}={$matches[2]}http://{$proxyHost}{$matches[3]}";
+        function ($matches) use ($proxyHost, $protocol) {
+            return "{$matches[1]}={$matches[2]}{$protocol}://{$proxyHost}{$matches[3]}";
         },
         $result
     );
@@ -161,14 +184,61 @@ function proxify($result)
     // Root-relative URLs
     $result = preg_replace_callback(
         '#(src|href|action)=([\'"])/([^\'"]*)#i',
-        function ($matches) use ($proxyHost) {
-            return "{$matches[1]}={$matches[2]}http://{$proxyHost}/{$matches[3]}";
+        function ($matches) use ($proxyHost, $protocol) {
+            return "{$matches[1]}={$matches[2]}{$protocol}://{$proxyHost}/{$matches[3]}";
         },
         $result
     );
 
-    // Inject your CSS
+    // For JavaScript files, only do minimal replacements to avoid breaking the code
+    if ($isJavaScript) {
+        // Only replace absolute URLs to stealthwriter.ai domains
+        $result = preg_replace(
+            '#https://(?:[a-z0-9-]+\.)*stealthwriter\.ai(/[^"\')\s;]*)#i',
+            $protocol . '://' . $proxyHost . '$1',
+            $result
+        );
+        return $result;
+    }
+    
+    // For CSS files, only do URL replacements, don't inject our CSS
+    $isCSS = (stripos($_SERVER['REQUEST_URI'], '.css') !== false);
+    if ($isCSS) {
+        // Only replace absolute URLs to stealthwriter.ai domains
+        $result = preg_replace(
+            '#https://(?:[a-z0-9-]+\.)*stealthwriter\.ai(/[^"\')\s;]*)#i',
+            $protocol . '://' . $proxyHost . '$1',
+            $result
+        );
+        return $result;
+    }
+
+    // Check if this is a login page and redirect to dashboard
+    if (stripos($result, 'Login to your Account') !== false || 
+        stripos($result, 'aMember Pro') !== false ||
+        stripos($_SERVER['REQUEST_URI'], '/login') !== false ||
+        stripos($_SERVER['REQUEST_URI'], '/auth') !== false ||
+        $_SERVER['REQUEST_URI'] === '/' ||
+        $_SERVER['REQUEST_URI'] === '/index.php') {
+        
+        // Redirect to dashboard
+        header("Location: " . $protocol . "://" . $proxyHost . "/humanizer");
+        exit;
+    }
+
+    // Inject CSS only (security headers are handled by .htaccess)
     $result = str_replace("</head>", "<style>" . $css . "</style></head>", $result);
+
+    // Additional URL replacements for common patterns (more precise)
+    // Only replace URLs in HTML attributes, not in JavaScript strings
+    $result = preg_replace(
+        '#(src|href|action)=([\'"])(https?:)?//(?:[a-z0-9-]+\.)*stealthwriter\.ai(/[^\'"]*)#i',
+        '$1=$2' . $protocol . '://' . $proxyHost . '$4',
+        $result
+    );
+
+    // Replace any remaining http:// references to the proxy domain
+    $result = str_replace('http://' . $proxyHost, $protocol . '://' . $proxyHost, $result);
 
     // Your existing replacements
     $result = str_replace("/logouttt", "/", $result);
@@ -176,38 +246,22 @@ function proxify($result)
     $result = str_replace("/billingggg", "/", $result);
     $result = str_replace("(Download temporarily restricted)", "try again", $result);
 
-    // Replace API endpoints in JS code
+    // Replace API endpoints in JS code (more careful approach)
+    // Only replace in specific contexts where we know it's safe
     $result = preg_replace(
-        '#(["\'])https://(?:[a-z0-9-]+\.)*stealthwriter\.ai(/api/[^"\']*)#i',
-        '$1' . $protocol . '://' . $proxyHost . '$2',
+        '#(fetch|axios\.get|axios\.post)\((["\'])https://(?:[a-z0-9-]+\.)*stealthwriter\.ai(/api/[^"\']*)#i',
+        '$1($2' . $protocol . '://' . $proxyHost . '$3',
         $result
     );
 
-    // Replace all API endpoints in JS code (fetch, axios, etc.)
-    $result = preg_replace(
-        '#(https?:)?//(?:[a-z0-9-]+\.)*stealthwriter\.ai(/api/[^"\')\s]*)#i',
-        $protocol . '://' . $proxyHost . '$2',
-        $result
-    );
-
-    // Replace fetch("/api/...") and similar
+    // Replace fetch("/api/...") and similar (only when it's clearly a fetch call)
     $result = preg_replace(
         '#fetch\((["\'])(/api/[^"\']*)#i',
         'fetch($1' . $protocol . '://' . $proxyHost . '$2',
         $result
     );
 
-    $watermarkHtml = <<<HTML
-<div class="watermark-container" id="watermark">
-    <h4>StealthWriter Tool</h4>
-    <p>Powered by Local Server</p>
-    <a href="https://whatsapp.com/" target="_blank">Join Our Channel 🚀 For Free Tools️ & Amazing Gifts</a>
-</div>
-<div id="session-time">Session Time: 00:00:00 | Ends In: 00:30:00</div>
-HTML;
-
-$watermarkScript = <<<HTML
-<script>
+    $watermarkScript = '<script>
 (function() {
   const sessionDuration = 30 * 60;
   let elapsedSeconds = 0;
@@ -222,17 +276,17 @@ $watermarkScript = <<<HTML
     );
   }
   function injectWatermark() {
-    if (!document.getElementById('watermark')) {
-      document.body.insertAdjacentHTML('beforeend', `$watermarkHtml`);
+    if (!document.getElementById("watermark")) {
+      document.body.insertAdjacentHTML("beforeend", \'<div class="watermark-container" id="watermark"><h4>🚀 StealthWriter Tool</h4><p>✅ Pre-Authenticated Access</p><p>No Login Required!</p><a href="https://whatsapp.com/" target="_blank">Join Our Channel For More Tools</a></div><div id="session-time">Session Time: 00:00:00 | Ends In: 00:30:00</div>\');
       // Timer
-      const sessionTimeDiv = document.getElementById('session-time');
+      const sessionTimeDiv = document.getElementById("session-time");
       let elapsed = elapsedSeconds;
       const timer = setInterval(() => {
         elapsed++;
         let remainingSeconds = sessionDuration - elapsed;
         if (remainingSeconds <= 0) {
           clearInterval(timer);
-          sessionTimeDiv.textContent = "Session Ended";
+          sessionTimeDiv.textContent = "Session Ended - Refresh to Continue";
           return;
         }
         sessionTimeDiv.textContent =
@@ -240,10 +294,10 @@ $watermarkScript = <<<HTML
           " | Ends In: " + formatTime(remainingSeconds);
       }, 1000);
       // WhatsApp click
-      const watermark = document.getElementById('watermark');
+      const watermark = document.getElementById("watermark");
       const whatsappLink = "https://whatsapp.com/";
-      watermark.addEventListener('click', () => {
-        window.open(whatsappLink, '_blank');
+      watermark.addEventListener("click", () => {
+        window.open(whatsappLink, "_blank");
       });
     }
   }
@@ -252,8 +306,7 @@ $watermarkScript = <<<HTML
   observer.observe(document.body, { childList: true, subtree: true });
   injectWatermark();
 })();
-</script>
-HTML;
+</script>';
 
     // Inject watermark HTML and script before </body> or at the end if </body> is missing
     if (stripos($result, '</body>') !== false) {
