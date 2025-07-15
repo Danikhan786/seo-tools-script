@@ -277,7 +277,7 @@ function proxify($result)
   }
   function injectWatermark() {
     if (!document.getElementById("watermark")) {
-      document.body.insertAdjacentHTML("beforeend", \'<div class="watermark-container" id="watermark"><h4>🚀 StealthWriter Tool</h4><p>✅ Pre-Authenticated Access</p><p>No Login Required!</p><a href="https://whatsapp.com/" target="_blank">Join Our Channel For More Tools</a></div><div id="session-time">Session Time: 00:00:00 | Ends In: 00:30:00</div>\');
+      document.body.insertAdjacentHTML("beforeend", \'<div class="watermark-container" id="watermark"><h4>🚀 StealthWriter Tool</h4><p>Powered by toolbaazar.com</p><a href="https://whatsapp.com/" target="_blank">Join Our Channel For More Tools</a></div><div id="session-time">Session Time: 00:00:00 | Ends In: 00:30:00</div>\');
       // Timer
       const sessionTimeDiv = document.getElementById("session-time");
       let elapsed = elapsedSeconds;
