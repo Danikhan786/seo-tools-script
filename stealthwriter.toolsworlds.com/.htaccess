@@ -1,33 +1,37 @@
-RewriteEngine on
+RewriteEngine On
 
-# Force HTTPS for all requests
+# ✅ Force HTTPS for all requests
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Security headers to prevent mixed content
-Header always set Content-Security-Policy "upgrade-insecure-requests"
-Header always set X-Content-Type-Options nosniff
-Header always set X-Frame-Options DENY
-Header always set X-XSS-Protection "1; mode=block"
+# ✅ Security headers to prevent vulnerabilities and mixed content
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "upgrade-insecure-requests"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
 
+# ✅ Route all non-file and non-directory requests to index.php with query param
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ /index.php?path=$1 [NC,L,QSA]
 
-# Set the "ea-php74" package as the default "PHP" programming language.
+# ✅ Set PHP version to ea-php74 (explicitly)
 <IfModule mime_module>
   AddHandler application/x-httpd-ea-php74 .php .php7 .phtml
 </IfModule>
 
+# ⚠️ Remove conflicting cPanel PHP handler comment block — not needed if you're using PHP 7.4 above
 # php -- BEGIN cPanel-generated handler, do not edit
 # Set the "ea-php81" package as the default "PHP" programming language.
 # php -- END cPanel-generated handler, do not edit
 
-Redirect /sso/logout /projects
-Redirect /billing-admin/profile/subscription /projects
-Redirect /accounts/profile /projects  
-Redirect /corporate/account /projects
-Redirect /product/payments/index.html /projects
-Redirect /product/payments/index.html /projects
-Redirect /accounts/queries /projects
-Redirect /api-documentation/ /projects
+# ✅ Redirect old URLs to /projects (SEO-friendly 301 redirects)
+Redirect 301 /sso/logout /projects
+Redirect 301 /billing-admin/profile/subscription /projects
+Redirect 301 /accounts/profile /projects  
+Redirect 301 /corporate/account /projects
+Redirect 301 /product/payments/index.html /projects
+Redirect 301 /accounts/queries /projects
+Redirect 301 /api-documentation/ /projects

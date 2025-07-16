@@ -238,7 +238,7 @@ function proxify($result)
     );
 
     // Replace any remaining http:// references to the proxy domain
-    $result = str_replace('http://' . $proxyHost, $protocol . '://' . $proxyHost, $result);
+    $result = str_replace('https://' . $proxyHost, $protocol . '://' . $proxyHost, $result);
 
     // Your existing replacements
     $result = str_replace("/logouttt", "/", $result);
